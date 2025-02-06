@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "sonner";
-import Providers from "./providers/permission-provider";
 import { athleticsFont } from "@/lib/font";
+import Providers from "@/providers/permission-provider";
 export const metadata: Metadata = {
   title: "Delegate AI",
   description: "Delegate AI",

@@ -21,6 +21,7 @@ import {
   Trash2,
   PhoneCallIcon,
   ChevronDown,
+  StethoscopeIcon,
 } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
@@ -135,19 +136,20 @@ export default function Contact() {
     { value: "Vascular Surgery", label: "Vascular Surgery" },
   ];
 
-  const [selectedOption, setSelectedOption] = useState("manual");
+  // const [selectedOption, setSelectedOption] = useState("manual");
+  const [selectedOption, setSelectedOption] = useState("no");
   const [selectedInsurance, setSelectedInsurance] = useState("");
   const [loading, setLoading] = useState(false);
   const [journeys, setJourneys] = useState([
     { id: 1, ehr: "", group: "", step: "" },
   ]);
 
-  const handleAddJourney = () => {
-    setJourneys((prev) => [
-      ...prev,
-      { id: Date.now(), ehr: "", group: "", step: "" },
-    ]);
-  };
+  // const handleAddJourney = () => {
+  //   setJourneys((prev) => [
+  //     ...prev,
+  //     { id: Date.now(), ehr: "", group: "", step: "" },
+  //   ]);
+  // };
 
   const handleRemoveJourney = (id: number) => {
     if (journeys.length > 1) {
@@ -258,7 +260,7 @@ export default function Contact() {
             </div>
           </Card>
           <Card className=" p-6 px-10 text-blue-950 ">
-            <p className="text-xl font-semibold">User Details</p>
+            <p className="text-xl font-semibold">Address Details</p>
 
             <div className="grid gap-6 pt-4 ">
               <div className="flex flex-col space-y-4 w-full pt-4">
@@ -288,9 +290,10 @@ export default function Contact() {
                 <p className="font-bold text-sm">Time of appointment</p>
 
                 <RadioGroup
-                  value={selectedOption}
-                  onValueChange={(value) => setSelectedOption(value)}
+                  // value={selectedOption}
+                  // onValueChange={(value) => setSelectedOption(value)}
                   className="flex md:gap-12 "
+                  defaultValue="as"
                 >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="as" id="r1" className=" " />
@@ -315,8 +318,9 @@ export default function Contact() {
 
                 <div>
                   <RadioGroup
-                    value={selectedDate}
-                    onValueChange={(value) => setSelectedDate(value)}
+                    // value={selectedDate}
+                    // onValueChange={(value) => setSelectedDate(value)}
+                    defaultValue="anytime"
                     className="flex flex-col gap-4 md:flex-row md:gap-12"
                   >
                     <div className="flex items-center space-x-2">
@@ -336,7 +340,7 @@ export default function Contact() {
                   </RadioGroup>
 
                   {/* Conditionally render input field */}
-                  {(selectedDate === "custom" ||
+                  {/* {(selectedDate === "custom" ||
                     selectedDate === "calendar") && (
                     <div className="mt-4">
                       <Label htmlFor="availability-input">
@@ -355,7 +359,7 @@ export default function Contact() {
                         className="mt-2"
                       />
                     </div>
-                  )}
+                  )} */}
                 </div>
               </div>
               <div className="flex flex-col space-y-4 w-full pt-4">
@@ -363,21 +367,57 @@ export default function Contact() {
                   Your insurance details
                 </Label>
 
-                <Select onValueChange={setSelectedInsurance}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {insuranceOptions.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <RadioGroup
+                  value={selectedOption}
+                  onValueChange={(value) => setSelectedOption(value)}
+                  defaultValue="no"
+                  className="flex flex-col gap-4  md:gap-8"
+                >
+                  <div className="flex gap-12">
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="no" id="r2" />
+                      <Label htmlFor="r2">No, I don't have insurance</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="yes" id="r1" />
+                      <Label htmlFor="r1">I have an insurance</Label>
+                    </div>
+                  </div>
 
+                  {selectedOption === "yes" && (
+                    <div className="flex flex-col space-y-2">
+                      <div className="flex flex-col space-y-4">
+                        <Label
+                          htmlFor="subscriber-id"
+                          className="w-auto font-semibold"
+                        >
+                          Subscriber ID
+                        </Label>
+                        <Input id="subscriber-id" />
+                      </div>
+                      <div className="flex flex-col space-y-4">
+                        <Label
+                          htmlFor="group-id"
+                          className="w-auto font-semibold"
+                        >
+                          Group ID
+                        </Label>
+                        <Input id="group-id" />
+                      </div>
+                      <div className="flex flex-col space-y-4">
+                        <Label
+                          htmlFor="insurer-id"
+                          className="w-auto font-semibold"
+                        >
+                          Insurer ID
+                        </Label>
+                        <Input id="insurer-id" />
+                      </div>
+                    </div>
+                  )}
+                </RadioGroup>
                 {/* Show input field for all selections except "no_insurance" */}
-                {selectedInsurance && selectedInsurance !== "no_insurance" && (
+                {/* {selectedInsurance && selectedInsurance !== "no_insurance" && (
                   <div>
                     <Label htmlFor="insurance-input">
                       Enter{" "}
@@ -394,7 +434,7 @@ export default function Contact() {
                       className="mt-2"
                     />
                   </div>
-                )}
+                )} */}
               </div>
               <div className="flex flex-col space-y-4">
                 <Label htmlFor="patient" className=" w-auto  font-semibold ">
@@ -408,8 +448,8 @@ export default function Contact() {
         <Link className="flex items-center justify-center " href="/status">
           <Button className=" w-[20%] mt-8 bg-blue-950">
             {" "}
-            <PhoneCallIcon />
-            Call
+            <StethoscopeIcon />
+            Find Doctors
           </Button>
         </Link>
       </div>
