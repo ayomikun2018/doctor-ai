@@ -7,7 +7,7 @@ import "./tasks.css";
 interface TaskProps {
   id: number;
   title: string;
-  index: number; // Add index prop
+  index: number; 
 }
 
 export const Task: React.FC<TaskProps> = ({ id, title, index }) => {
