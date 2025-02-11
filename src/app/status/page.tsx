@@ -37,30 +37,42 @@ export default function Status() {
       const parsedData = JSON.parse(storedData);
       const sortedData = parsedData.results
         .slice(0, 10)
-        .sort((a, b) => b.rating - a.rating)
+        .sort((a, b) => {
+          if (a.rating == null && b.rating == null) return 0; // Both have no rating, keep order
+          if (a.rating == null) return 1; // Move items without a rating to the bottom
+          if (b.rating == null) return -1; // Keep rated items at the top
+          return b.rating - a.rating; // Sort by rating (highest first)
+        })
         .map((item, index) => ({
           ...item,
-          name: `${index + 1}. ${item.name}`,
+          name: `${index + 1}. ${item.name}`, // Preserve index logic
           id: item.place_id,
         }));
+
       setDoctors(sortedData);
     } else {
-      // Redirect back if no data found
       router.push("/");
     }
   }, [router]);
 
   const handleDragEnd = (event) => {
-    if (isConfirmed) return; // Prevent dragging if confirmed
-
     const { active, over } = event;
-    if (active.id !== over.id) {
-      setDoctors((items) => {
-        const oldIndex = items.findIndex((item) => item.place_id === active.id);
-        const newIndex = items.findIndex((item) => item.place_id === over.id);
-        return arrayMove(items, oldIndex, newIndex);
-      });
-    }
+
+    if (!over || active.id === over.id) return;
+
+    // Get old & new indexes
+    const oldIndex = doctors.findIndex((doctor) => doctor.id === active.id);
+    const newIndex = doctors.findIndex((doctor) => doctor.id === over.id);
+
+    // Move items in the array
+    const newSortedDoctors = arrayMove(doctors, oldIndex, newIndex).map(
+      (doctor, index) => ({
+        ...doctor,
+        name: `${index + 1}. ${doctor.name.replace(/^\d+\.\s*/, "")}`, // Renumber dynamically
+      })
+    );
+
+    setDoctors(newSortedDoctors);
   };
 
   const fetchPhoneNumbers = async () => {

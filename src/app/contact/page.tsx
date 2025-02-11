@@ -215,7 +215,7 @@ export default function Contact() {
                 </Label>
                 <Input
                   name="phoneNumber"
-                  placeholder="Phone Number"
+                  placeholder=""
                   onChange={formik.handleChange}
                   value={formik.values.phoneNumber}
                   className={

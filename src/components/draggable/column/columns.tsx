@@ -70,13 +70,14 @@ const Column: React.FC<ColumnProps> = ({ tasks }) => {
         key={tasks.map((task) => task.id).join(",")}
         items={tasks}
         strategy={verticalListSortingStrategy}
+        
       >
         {tasks.map((task, index) => (
           <Task
             key={task.id}
             id={task.id}
             title={task.name}
-            rating={task.rating} // Fixed: Added rating prop
+            rating={task.rating}
             index={index}
           />
         ))}
