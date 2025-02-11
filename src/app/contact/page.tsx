@@ -425,14 +425,16 @@ export default function Contact() {
           // href="/status"
           onClick={handleFindDoctors}
         > */}
-        <Button
-          className=" w-[20%] mt-8 bg-blue-950"
-          onClick={handleFindDoctors}
-        >
-          {" "}
-          <StethoscopeIcon />
-          Find Doctors
-        </Button>
+        <div className="flex items-center justify-center">
+          <Button
+            className=" w-[20%] mt-8 bg-blue-950"
+            onClick={handleFindDoctors}
+          >
+            {" "}
+            <StethoscopeIcon />
+            Find Doctors
+          </Button>
+        </div>
       </form>
     </div>
   );
