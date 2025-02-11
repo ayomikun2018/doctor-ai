@@ -1,3 +1,38 @@
+// "use client";
+// import { useSortable } from "@dnd-kit/sortable";
+// import { CSS } from "@dnd-kit/utilities";
+// import React from "react";
+// import "./tasks.css";
+
+// interface TaskProps {
+//   id: number;
+//   title: string;
+//   index: number;
+// }
+
+// // 41332608
+// export const Task: React.FC<TaskProps> = ({ id, title, index, rating }) => {
+//   const { attributes, listeners, setNodeRef, transform, transition } =
+//     useSortable({ id });
+
+//   const style = {
+//     transition,
+//     transform: CSS.Transform.toString(transform),
+//   };
+
+//   return (
+//     <div
+//       ref={setNodeRef}
+//       style={style}
+//       {...attributes}
+//       {...listeners}
+//       className="task flex justify-between"
+//     >
+//       {index === 0 ? "✅" : "❌"} {title} {rating}
+//     </div>
+//   );
+// };
+
 "use client";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -7,11 +42,11 @@ import "./tasks.css";
 interface TaskProps {
   id: number;
   title: string;
-  index: number; 
+  rating?: number;
+  index: number;
 }
 
-// 41332608
-export const Task: React.FC<TaskProps> = ({ id, title, index }) => {
+export const Task: React.FC<TaskProps> = ({ id, title, rating, index }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
 
@@ -28,7 +63,9 @@ export const Task: React.FC<TaskProps> = ({ id, title, index }) => {
       {...listeners}
       className="task flex justify-between"
     >
-      {index === 0 ? "✅" : "❌"} {title}
+      <span>{title}</span>
+      <span>{rating !== undefined ? `⭐ ${rating}` : `⭐ -`}</span>
+      <span>{index === 0 ? "✅" : "❌"}</span>
     </div>
   );
 };

@@ -21,6 +21,7 @@
     "@radix-ui/react-scroll-area": "^1.2.2",
     "@radix-ui/react-select": "^2.1.5",
     "@radix-ui/react-slot": "^1.1.1",
+    "@react-google-maps/api": "^2.20.5",
     "@reduxjs/toolkit": "^2.5.1",
     "@tanstack/react-table": "^8.20.6",
     "axios": "^1.7.9",
@@ -31,13 +32,15 @@
     "next": "15.1.6",
     "react": "^18.0.0",
     "react-day-picker": "^8.10.1",
+    "react-dnd": "^16.0.1",
     "react-dom": "^18.0.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.1.5",
     "sonner": "^1.7.4",
     "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7",
-    "uuid": "^11.0.5"
+    "uuid": "^11.0.5",
+    "yup": "^1.6.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
