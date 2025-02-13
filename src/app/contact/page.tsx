@@ -141,7 +141,7 @@ export default function Contact() {
       try {
         const { lat, lng } = selectedLocation || { lat: 0, lng: 0 };
         const response = await axios.get(
-          `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=20000&keyword=${formik.values.specialty}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY}`
+          `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=20000&keyword=${formik.values.specialty}&key=AIzaSyDd1e56OQkVXAJRUchOqHNJTGkCyrA2e3A`
         );
 
         sessionStorage.setItem("formData", JSON.stringify(values));
