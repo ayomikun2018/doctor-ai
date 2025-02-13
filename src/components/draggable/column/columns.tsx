@@ -1,47 +1,3 @@
-// import React from "react";
-// import {
-//   SortableContext,
-//   verticalListSortingStrategy,
-// } from "@dnd-kit/sortable";
-
-// import "./columns.css";
-// import { Task } from "../tasks/tasks"; // Import Task component
-
-// // Define the Task type if not already defined
-// interface Task {
-//   id: number;
-//   name: string;
-// }
-
-// // Define the props type for the Column component
-// interface ColumnProps {
-//   tasks: Task[];
-// }
-
-// const Column: React.FC<ColumnProps> = ({ tasks }) => {
-//   return (
-//     <div className="column">
-//       <SortableContext
-//         key={tasks.map((task) => task.place_id).join(",")}
-//         items={tasks}
-//         strategy={verticalListSortingStrategy}
-//       >
-//         {tasks.map((task, index) => (
-//           <Task
-//             key={task.place_id}
-//             id={task.place_id}
-//             title={task.name}
-//             title={task.rating}
-//             index={index}
-//           /> // Pass index prop
-//         ))}
-//       </SortableContext>
-//     </div>
-//   );
-// };
-
-// export default Column;
-
 import React from "react";
 import {
   SortableContext,
@@ -49,38 +5,58 @@ import {
 } from "@dnd-kit/sortable";
 
 import "./columns.css";
-import { Task } from "../tasks/tasks"; // Import Task component
+import { Task } from "../tasks/tasks";
 
-// Define the Task type
 interface TaskType {
   id: number;
   name: string;
-  rating?: number; // Added optional rating property
+  rating?: number;
 }
 
-// Define the props type for the Column component
+export interface CallStatusType {
+  isInitiated: boolean;
+  ssid: string;
+  email: string;
+}
+
 interface ColumnProps {
   tasks: TaskType[];
+  activeCallIndex: number;
+  callStatus: CallStatusType;
 }
 
-const Column: React.FC<ColumnProps> = ({ tasks }) => {
+const Column: React.FC<ColumnProps> = ({
+  tasks,
+  activeCallIndex,
+  callStatus,
+}) => {
   return (
     <div className="column">
-      <SortableContext
-        key={tasks.map((task) => task.id).join(",")}
-        items={tasks}
-        strategy={verticalListSortingStrategy}
-      >
-        {tasks.map((task, index) => (
-          <Task
-            key={task.id}
-            id={task.id}
-            title={task.name}
-            rating={task.rating} // Fixed: Added rating prop
-            index={index}
-          />
-        ))}
-      </SortableContext>
+      <table className="task-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Hospital Name</th>
+            <th>Rating</th>
+            <th>Call Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <SortableContext items={tasks} strategy={verticalListSortingStrategy}>
+            {tasks.map((task, index) => (
+              <Task
+                key={task.id}
+                id={task.id.toString()}
+                index={index}
+                title={task.name}
+                rating={task.rating}
+                activeCallIndex={activeCallIndex}
+                callStatus={callStatus}
+              />
+            ))}
+          </SortableContext>
+        </tbody>
+      </table>
     </div>
   );
 };

@@ -1,52 +1,24 @@
-// "use client";
-// import { useSortable } from "@dnd-kit/sortable";
-// import { CSS } from "@dnd-kit/utilities";
-// import React from "react";
-// import "./tasks.css";
-
-// interface TaskProps {
-//   id: number;
-//   title: string;
-//   index: number;
-// }
-
-// // 41332608
-// export const Task: React.FC<TaskProps> = ({ id, title, index, rating }) => {
-//   const { attributes, listeners, setNodeRef, transform, transition } =
-//     useSortable({ id });
-
-//   const style = {
-//     transition,
-//     transform: CSS.Transform.toString(transform),
-//   };
-
-//   return (
-//     <div
-//       ref={setNodeRef}
-//       style={style}
-//       {...attributes}
-//       {...listeners}
-//       className="task flex justify-between"
-//     >
-//       {index === 0 ? "✅" : "❌"} {title} {rating}
-//     </div>
-//   );
-// };
-
-"use client";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import React from "react";
-import "./tasks.css";
 
 interface TaskProps {
-  id: number;
+  id: string;
   title: string;
   rating?: number;
   index: number;
+  activeCallIndex: number;
+  callStatus: {
+    isInitiated: boolean;
+  };
 }
-
-export const Task: React.FC<TaskProps> = ({ id, title, rating, index }) => {
+export const Task: React.FC<TaskProps> = ({
+  id,
+  title,
+  rating,
+  index,
+  activeCallIndex,
+  callStatus,
+}) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
 
@@ -56,16 +28,17 @@ export const Task: React.FC<TaskProps> = ({ id, title, rating, index }) => {
   };
 
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-      className="task flex justify-between"
-    >
-      <span>{title}</span>
-      <span>{rating !== undefined ? `⭐ ${rating}` : `⭐ -`}</span>
-      <span>{index === 0 ? "✅" : "❌"}</span>
-    </div>
+    <tr ref={setNodeRef} style={style} {...attributes} {...listeners}>
+      <td>{index + 1}</td>
+      <td>{title}</td>
+      <td>{rating !== undefined ? `⭐ ${rating}` : `⭐ -`}</td>
+      <td>
+        {callStatus.isInitiated === false
+          ? "..."
+          : activeCallIndex === index
+          ? "📞 Calling..."
+          : "❌"}
+      </td>
+    </tr>
   );
 };
