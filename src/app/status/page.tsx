@@ -70,7 +70,7 @@ export default function Status() {
       doctors.map(async (doctor) => {
         try {
           const response = await axios.get(
-            `https://maps.googleapis.com/maps/api/place/details/json?fields=name,rating,formatted_phone_number,opening_hours,reviews,geometry&key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY}&place_id=${doctor.place_id}`
+            `https://maps.googleapis.com/maps/api/place/details/json?fields=name,rating,formatted_phone_number,opening_hours,reviews,geometry&key=AIzaSyDd1e56OQkVXAJRUchOqHNJTGkCyrA2e3A&place_id=${doctor.place_id}`
           );
           return response.data.result.formatted_phone_number;
         } catch (error) {
