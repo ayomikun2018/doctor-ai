@@ -83,31 +83,28 @@ export default function Status() {
       })
     );
     setPhoneNumbers(numbers);
-     // console.log(doctors,numbers,'xxxx')
+    // console.log(doctors,numbers,'xxxx')
   };
-useEffect(()=> {
-  if(doctors.length){
-    fetchPhoneNumbers()
-  }
-// eslint-disable-next-line react-hooks/exhaustive-deps
-},[doctors])
-
-
+  useEffect(() => {
+    if (doctors.length) {
+      fetchPhoneNumbers();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [doctors]);
 
   const handleConfirmSequence = async () => {
     setIsConfirmed(true); // Disable button and dragging
 
     try {
-
       // console.log("Phone numbers:", phoneNumbers);
 
       // Extract email and objective from formData
       const formData = JSON.parse(sessionStorage.getItem("formData"));
-      const { email,phoneNumber,patientName,objective } = formData;
+      const { email, phoneNumber, patientName, objective } = formData;
       // console.log({formData})
 
       // Initiate call with the first doctor's phone number
-      const firstDoctorPhoneNumber =   phoneNumbers[activeCallIndex]; // '+2348168968260'
+      const firstDoctorPhoneNumber = phoneNumbers[activeCallIndex]; // '+2348168968260'
       console.log("current doctor's phone number:", firstDoctorPhoneNumber);
       const data = {
         objective: "Schedule an appointment",
@@ -118,7 +115,7 @@ useEffect(()=> {
         name_of_org: doctors[activeCallIndex]?.name,
         caller_email: email,
         phone_number: firstDoctorPhoneNumber,
-      }
+      };
       // console.log({data})
       const response = await axios.post(
         "https://callai-backend-243277014955.us-central1.run.app/api/assistant-initiate-call",
@@ -130,15 +127,11 @@ useEffect(()=> {
         ssid: response.data.call_id,
         email: email,
       });
-      console.log('new idx',response.data.call_id)
+      console.log("new idx", response.data.call_id);
 
       router.push(
-        `/status?ssid=${
-          response.data.call_id
-        }&isInitiated=true&patient_num
-        ber=${encodeURIComponent(
-          firstDoctorPhoneNumber
-        )}`
+        `/status?ssid=${response.data.call_id}&isInitiated=true&patient_num
+        ber=${encodeURIComponent(firstDoctorPhoneNumber)}`
       );
     } catch (error) {
       console.error("Error fetching phone numbers or initiating call:", error);
@@ -214,7 +207,7 @@ useEffect(()=> {
     let ws: WebSocket | null = null;
 
     const initiateCall = async (doctorPhoneNumber: string) => {
-      console.log('new call initiated for', doctorPhoneNumber)
+      console.log("new call initiated for", doctorPhoneNumber);
       try {
         const formData = JSON.parse(sessionStorage.getItem("formData"));
         if (!formData) {
@@ -222,7 +215,7 @@ useEffect(()=> {
           return;
         }
 
-        const { email,phoneNumber,patientName,objective } = formData;
+        const { email, phoneNumber, patientName, objective } = formData;
         const data = {
           objective: "Schedule an appointment",
           context: objective,
@@ -232,7 +225,7 @@ useEffect(()=> {
           name_of_org: doctors[activeCallIndex]?.name,
           caller_email: email,
           phone_number: doctorPhoneNumber,
-        }
+        };
 
         const callResponse = await axios.post(
           "https://callai-backend-243277014955.us-central1.run.app/api/assistant-initiate-call",
@@ -243,7 +236,7 @@ useEffect(()=> {
           ssid: callResponse.data.call_id,
           email: email,
         });
-        console.log('new idddd',callResponse.data.call_id)
+        console.log("new idddd", callResponse.data.call_id);
         router.push(
           `/status?ssid=${
             callResponse.data.call_id
@@ -270,19 +263,19 @@ useEffect(()=> {
         console.log("Calling next doctor:", nextDoctor);
         // ws?.close()
 
-        const phoneNumber = phoneNumbers[newIndex]  //+2348168968260
+        const phoneNumber = phoneNumbers[newIndex]; //+2348168968260
         if (phoneNumber) {
           await initiateCall(phoneNumber);
         } else {
           console.log("No phone number available for the next doctor.");
           toast.error("Next doctor has no phone number. Skipping...");
-         // setActiveCallIndex((prevIndex) => prevIndex + 1); // Move to the next doctor
+          // setActiveCallIndex((prevIndex) => prevIndex + 1); // Move to the next doctor
         }
-      }else {
+      } else {
         toast.success("All doctors have been called successfully..");
-        setIsConfirmed(false)
+        setIsConfirmed(false);
       }
-    }
+    };
     const connectWebSocket = () => {
       ws = new WebSocket(
         "wss://callai-backend-243277014955.us-central1.run.app/ws/notifications"
@@ -297,21 +290,22 @@ useEffect(()=> {
 
       ws.onmessage = async (event) => {
         const data = JSON.parse(event.data);
-        //console.log("WebSocket Message:", data);
+        console.log("WebSocket Message:", data);
 
         if (data.event === "call_ended") {
-         // console.log("Call Ended Data:", data);
-          setTimeout(async() => {
-            const call_ended_result = await handleEndCall(data?.call_sid)
+          // console.log("Call Ended Data:", data);
+          setTimeout(async () => {
+            const call_ended_result = await handleEndCall(data?.call_sid);
             // console.log({call_ended_result})
             if (call_ended_result?.data?.status == "yes") {
               toast.success("Appointment Booked Successfully");
               ws?.close();
               return;
-            }
-            else {
-              toast.warning("Appointment could not be booked. Trying next doctor...");
-              moveToNextDoctor()
+            } else {
+              toast.warning(
+                "Appointment could not be booked. Trying next doctor..."
+              );
+              moveToNextDoctor();
             }
           }, 5000);
         }
@@ -324,17 +318,16 @@ useEffect(()=> {
           ]);
         }
 
-        if(data.event === "call_not_picked") {
-        // doctor did not pick call...move to next
-        toast.info("Doctor did not pick call. Trying next doctor...");
+        if (data.event === "call_not_picked") {
+          // doctor did not pick call...move to next
+          toast.info("Doctor did not pick call. Trying next doctor...");
 
-        moveToNextDoctor()
-
+          moveToNextDoctor();
         }
       };
 
       ws.onclose = () => {
-       // console.log("WebSocket disconnected");
+        // console.log("WebSocket disconnected");
       };
 
       ws.onerror = (error) => {
@@ -354,8 +347,8 @@ useEffect(()=> {
     return () => {
       ws?.close();
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [callStatus,phoneNumbers, doctors, activeCallIndex]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [callStatus, phoneNumbers, doctors, activeCallIndex]);
 
   const getDisplayTranscript = () => {
     if (transcriptArray.length > 0) {
@@ -366,18 +359,22 @@ useEffect(()=> {
   const handleEndCall = async (id: string, retries = 5): Promise<any> => {
     try {
       const resp = await axios.post(
-        `https://callai-backend-243277014955.us-central1.run.app/api/appointment-booked-status`, 
+        `https://callai-backend-243277014955.us-central1.run.app/api/appointment-booked-status`,
         { call_id: id }
       );
       return resp.data;
     } catch (error) {
       //console.error('Error ending call:', error);
       if (error.response && error.response.status === 500 && retries > 0) {
-        console.log(`Retrying to end call in 5 seconds... (${retries} retries left)`);
-        await new Promise(resolve => setTimeout(resolve, 5000));
+        console.log(
+          `Retrying to end call in 5 seconds... (${retries} retries left)`
+        );
+        await new Promise((resolve) => setTimeout(resolve, 5000));
         return handleEndCall(id, retries - 1);
       }
-      console.log('Failed to end call after multiple attempts. Returning true.');
+      console.log(
+        "Failed to end call after multiple attempts. Returning true."
+      );
       return true;
     }
   };
@@ -405,7 +402,12 @@ useEffect(()=> {
               collisionDetection={closestCenter}
             >
               <ScrollArea className="h-96 w-full">
-                <Column activeCallIndex={activeCallIndex} tasks={doctors} isDraggable={!isConfirmed} callStatus={callStatus} />
+                <Column
+                  activeCallIndex={activeCallIndex}
+                  tasks={doctors}
+                  isDraggable={!isConfirmed}
+                  callStatus={callStatus}
+                />
               </ScrollArea>
               <div className="flex justify-between">
                 <Button
