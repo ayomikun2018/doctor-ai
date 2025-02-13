@@ -35,22 +35,33 @@ import {
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "sonner";
+import { GOOGLE_MAP_API_KEY } from "@/constants/global";
 
 const medicalSpecialtiesOptions = [
-  { value: "Allergy and Immunology", label: "Allergy and Immunology" },
-  { value: "Anesthesiology", label: "Anesthesiology" },
-  { value: "Cardiology", label: "Cardiology" },
-  { value: "Cardiothoracic Surgery", label: "Cardiothoracic Surgery" },
+  { value: "allergy and immunology", label: "Allergy and Immunology" },
+  { value: "anesthesiology", label: "Anesthesiology" },
+  { value: "cardiology", label: "Cardiology" },
+  { value: "cardiothoracic surgery", label: "Cardiothoracic Surgery" },
   {
-    value: "Colon and Rectal Surgery (Proctology)",
-    label: "Colon and Rectal Surgery (Proctology)",
+    value: "colon and rectal surgery (proctology)",
+    label: "colon and Rectal surgery (Proctology)",
   },
-  { value: "Critical Care Medicine", label: "Critical Care Medicine" },
+  {
+    value: "Cosmetic & Restorative Dentistry",
+    label: "Cosmetic & Restorative Dentistry",
+  },
+  { value: "critical care medicine", label: "Critical Care Medicine" },
+  { value: "dentist", label: "Dentist" },
   { value: "Dermatology", label: "Dermatology" },
   { value: "Emergency Medicine", label: "Emergency Medicine" },
+  { value: "Endodontics", label: "Endodontics" },
   { value: "Endocrinology", label: "Endocrinology" },
   { value: "Family Medicine", label: "Family Medicine" },
   { value: "Gastroenterology", label: "Gastroenterology" },
+  {
+    value: "General & Preventive Dentistry",
+    label: "General & Preventive Dentistry",
+  },
   { value: "General Surgery", label: "General Surgery" },
   { value: "Genetics", label: "Genetics" },
   { value: "Geriatrics", label: "Geriatrics" },
@@ -65,10 +76,16 @@ const medicalSpecialtiesOptions = [
     value: "Oral and Maxillofacial Surgery",
     label: "Oral and Maxillofacial Surgery",
   },
+  { value: "Orthodontics", label: "Orthodontics" },
   { value: "Orthopedic Surgery", label: "Orthopedic Surgery" },
   { value: "Otolaryngology (ENT)", label: "Otolaryngology (ENT)" },
+  { value: "Pediatric Dentistry", label: "Pediatric Dentistry" },
   { value: "Pediatric Surgery", label: "Pediatric Surgery" },
   { value: "Pediatrics", label: "Pediatrics" },
+  {
+    value: "Periodontics & Implant Dentistry",
+    label: "Periodontics & Implant Dentistry",
+  },
   {
     value: "Physical Medicine and Rehabilitation (Physiatry)",
     label: "Physical Medicine and Rehabilitation (Physiatry)",
@@ -84,6 +101,7 @@ const medicalSpecialtiesOptions = [
   { value: "Vascular Surgery", label: "Vascular Surgery" },
 ];
 const validationSchema = Yup.object().shape({
+  patientName: Yup.string().required("Patient Name is required"),
   phoneNumber: Yup.string().required("Phone number is required"),
   email: Yup.string().email("Invalid email").required("Email is required"),
   objective: Yup.string().required("Objective is required"),
@@ -123,14 +141,14 @@ export default function Contact() {
       try {
         const { lat, lng } = selectedLocation || { lat: 0, lng: 0 };
         const response = await axios.get(
-          `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=2000&type=${formik.values.specialty}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY}`
+          `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=20000&keyword=${formik.values.specialty}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY}`
         );
 
         sessionStorage.setItem("formData", JSON.stringify(values));
         sessionStorage.setItem("statusData", JSON.stringify(response.data));
 
-        console.log("Form Data:", values);
-        console.log("API Response Data:", response.data);
+        // console.log("Form Data:", values);
+        // console.log("API Response Data:", response.data);
         // Navigate to status page
         router.push("/status");
       } catch (error) {
@@ -150,17 +168,18 @@ export default function Contact() {
       }
     }
   };
-  const handleFindDoctors = async () => {
-    try {
-      const { lat, lng } = selectedLocation || { lat: 0, lng: 0 };
-      const response = await axios.get(
-        `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=2000&type=${formik.values.specialty}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY}`
-      );
-      setDoctors(response.data.results.slice(0, 10));
-    } catch (error) {
-      console.error("Error fetching doctors:", error);
-    }
-  };
+  // const handleFindDoctors = async () => {
+  //   try {
+  //     const { lat, lng } = selectedLocation || { lat: 0, lng: 0 };
+  //     const response = await axios.get(
+  //       `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=2000&type=${formik.values.specialty}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY}`
+  //     );
+  //     setDoctors(response.data.results.slice(0, 10));
+  //     console.log(response?.data?.results)
+  //   } catch (error) {
+  //     console.error("Error fetching doctors:", error);
+  //   }
+  // };
 
   return (
     <div className=" ">
@@ -182,7 +201,17 @@ export default function Contact() {
                   placeholder="Patient Name"
                   onChange={formik.handleChange}
                   value={formik.values.patientName}
+                  className={
+                    formik.errors.patientName && formik.touched.patientName
+                      ? "border-red-500"
+                      : ""
+                  }
                 />
+                {formik.errors.patientName && formik.touched.patientName && (
+                  <div className="text-red-500">
+                    {formik.errors.patientName}
+                  </div>
+                )}
               </div>
               <div className="flex flex-col space-y-4 pt-6 w-full">
                 <Label htmlFor="number" className="w-auto font-semibold ">
@@ -215,7 +244,7 @@ export default function Contact() {
                 </Label>
                 <Input
                   name="phoneNumber"
-                  placeholder=""
+                  placeholder="Phone Number"
                   onChange={formik.handleChange}
                   value={formik.values.phoneNumber}
                   className={
@@ -428,7 +457,7 @@ export default function Contact() {
         <div className="flex items-center justify-center">
           <Button
             className=" w-[20%] mt-8 bg-blue-950"
-            onClick={handleFindDoctors}
+            //onClick={handleFindDoctors}
           >
             {" "}
             <StethoscopeIcon />

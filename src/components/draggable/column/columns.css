@@ -1,9 +1,30 @@
-.column {
-  background-color: #f9f5f5;
-  border-radius: 5px;
-  padding: 15px;
-  width: 90%;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+.task-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.task-table th,
+.task-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+}
+
+.task-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+  text-align: start;
+}
+
+.task-table td {
+  text-align: start;
+}
+
+.task-table td:first-child {
+  font-weight: bold;
+  width: 50px;
+}
+
+.task-table tbody tr:hover {
+  background-color: #f9f9f9;
 }
