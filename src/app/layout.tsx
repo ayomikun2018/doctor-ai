@@ -4,8 +4,8 @@ import { Toaster } from "sonner";
 import { athleticsFont } from "@/lib/font";
 import Providers from "@/providers/permission-provider";
 export const metadata: Metadata = {
-  title: "Delegate AI",
-  description: "Delegate AI",
+  title: "Doctor AI",
+  description: "Doctor AI",
 };
 
 export default function RootLayout({
