@@ -1,4 +1,3 @@
-
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
@@ -34,13 +33,13 @@ export const Task: React.FC<TaskProps> = ({
     <tr ref={setNodeRef} style={style} {...attributes} {...listeners}>
       <td>{index + 1}</td>
       <td>{title}</td>
-      <td>{rating !== undefined ? `:star: ${rating}` : `:star: -`}</td>
+      <td>{rating !== undefined ? `\u2B50 ${rating}` : `\u2B50 -`}</td>
       <td>
         {callStatus.isInitiated === false
           ? "..."
           : activeCallIndex === index
-          ? ":telephone_receiver: Calling..."
-          : ":x:"}
+          ? "\uD83D\uDCDE Calling..." // Unicode for :telephone_receiver:
+          : "\u274C"}
       </td>
       <td>{distance}</td>
     </tr>
