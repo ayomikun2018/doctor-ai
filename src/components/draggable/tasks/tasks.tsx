@@ -1,3 +1,4 @@
+
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
@@ -5,6 +6,7 @@ interface TaskProps {
   id: string;
   title: string;
   rating?: number;
+  distance?: string;
   index: number;
   activeCallIndex: number;
   callStatus: {
@@ -17,6 +19,7 @@ export const Task: React.FC<TaskProps> = ({
   rating,
   index,
   activeCallIndex,
+  distance,
   callStatus,
 }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
@@ -31,14 +34,15 @@ export const Task: React.FC<TaskProps> = ({
     <tr ref={setNodeRef} style={style} {...attributes} {...listeners}>
       <td>{index + 1}</td>
       <td>{title}</td>
-      <td>{rating !== undefined ? `⭐ ${rating}` : `⭐ -`}</td>
+      <td>{rating !== undefined ? `:star: ${rating}` : `:star: -`}</td>
       <td>
         {callStatus.isInitiated === false
           ? "..."
           : activeCallIndex === index
-          ? "📞 Calling..."
-          : "❌"}
+          ? ":telephone_receiver: Calling..."
+          : ":x:"}
       </td>
+      <td>{distance}</td>
     </tr>
   );
 };

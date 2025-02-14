@@ -23,7 +23,7 @@ import {
   StethoscopeIcon,
 } from "lucide-react";
 import Link from "next/link";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/general-components/navbar";
 import { DatePickerDemo } from "@/components/ui/date-picker";
@@ -46,10 +46,7 @@ const medicalSpecialtiesOptions = [
     value: "colon and rectal surgery (proctology)",
     label: "colon and Rectal surgery (Proctology)",
   },
-  {
-    value: "Cosmetic & Restorative Dentistry",
-    label: "Cosmetic & Restorative Dentistry",
-  },
+  { value: "Cosmetic & Restorative Dentistry", label: "Cosmetic & Restorative Dentistry"},
   { value: "critical care medicine", label: "Critical Care Medicine" },
   { value: "dentist", label: "Dentist" },
   { value: "Dermatology", label: "Dermatology" },
@@ -58,10 +55,7 @@ const medicalSpecialtiesOptions = [
   { value: "Endocrinology", label: "Endocrinology" },
   { value: "Family Medicine", label: "Family Medicine" },
   { value: "Gastroenterology", label: "Gastroenterology" },
-  {
-    value: "General & Preventive Dentistry",
-    label: "General & Preventive Dentistry",
-  },
+  { value: "General & Preventive Dentistry", label: "General & Preventive Dentistry"},
   { value: "General Surgery", label: "General Surgery" },
   { value: "Genetics", label: "Genetics" },
   { value: "Geriatrics", label: "Geriatrics" },
@@ -82,10 +76,7 @@ const medicalSpecialtiesOptions = [
   { value: "Pediatric Dentistry", label: "Pediatric Dentistry" },
   { value: "Pediatric Surgery", label: "Pediatric Surgery" },
   { value: "Pediatrics", label: "Pediatrics" },
-  {
-    value: "Periodontics & Implant Dentistry",
-    label: "Periodontics & Implant Dentistry",
-  },
+  { value: "Periodontics & Implant Dentistry", label: "Periodontics & Implant Dentistry" },
   {
     value: "Physical Medicine and Rehabilitation (Physiatry)",
     label: "Physical Medicine and Rehabilitation (Physiatry)",
@@ -101,7 +92,6 @@ const medicalSpecialtiesOptions = [
   { value: "Vascular Surgery", label: "Vascular Surgery" },
 ];
 const validationSchema = Yup.object().shape({
-  patientName: Yup.string().required("Patient Name is required"),
   phoneNumber: Yup.string().required("Phone number is required"),
   email: Yup.string().email("Invalid email").required("Email is required"),
   objective: Yup.string().required("Objective is required"),
@@ -110,7 +100,9 @@ const validationSchema = Yup.object().shape({
 
 export default function Contact() {
   const router = useRouter();
-  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedAvailability, setSelectedAvailability] = useState("anytime");
+  const [timeOfAppointment, settimeOfAppointment] = useState("soonest");
+  const [isnewPatient, setisnewPatient] = useState("yes");
   const [selectedLocation, setSelectedLocation] = useState(null);
   const inputRefs = useRef([]);
   const [selectedOption, setSelectedOption] = useState("no");
@@ -130,9 +122,15 @@ export default function Contact() {
       patientHistory: "",
       objective: "",
       specialty: "",
+      groupId:"",
+      subscriberId:"",
+      insurerId:"",
+      dob:"",
+      address:""
     },
     validationSchema,
     onSubmit: async (values) => {
+      const updatedValues = {...values, selectedAvailability,timeOfAppointment,isnewPatient}
       if (!selectedLocation) {
         toast.error("No location selected");
         return;
@@ -141,10 +139,10 @@ export default function Contact() {
       try {
         const { lat, lng } = selectedLocation || { lat: 0, lng: 0 };
         const response = await axios.get(
-          `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=20000&keyword=${formik.values.specialty}&key=AIzaSyDd1e56OQkVXAJRUchOqHNJTGkCyrA2e3A`
+          `https://callai-backend-243277014955.us-central1.run.app/api/search_places?location=${lat},${lng}&radius=20000&keyword=${formik.values.specialty}`
         );
 
-        sessionStorage.setItem("formData", JSON.stringify(values));
+        sessionStorage.setItem("formData", JSON.stringify(updatedValues));
         sessionStorage.setItem("statusData", JSON.stringify(response.data));
 
         // console.log("Form Data:", values);
@@ -156,6 +154,15 @@ export default function Contact() {
       }
     },
   });
+
+  useEffect(()=> {
+    if (selectedOption === 'no') {
+      formik.setFieldValue('insurerId', 'I do not have insurance');
+      formik.setFieldValue('subscriberId', '');
+      formik.setFieldValue('groupId', '');
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[selectedOption])
 
   const handleOnPlacesChanged = (index) => {
     if (inputRefs.current[index]) {
@@ -201,23 +208,16 @@ export default function Contact() {
                   placeholder="Patient Name"
                   onChange={formik.handleChange}
                   value={formik.values.patientName}
-                  className={
-                    formik.errors.patientName && formik.touched.patientName
-                      ? "border-red-500"
-                      : ""
-                  }
                 />
-                {formik.errors.patientName && formik.touched.patientName && (
-                  <div className="text-red-500">
-                    {formik.errors.patientName}
-                  </div>
-                )}
               </div>
               <div className="flex flex-col space-y-4 pt-6 w-full">
                 <Label htmlFor="number" className="w-auto font-semibold ">
                   Date of birth
                 </Label>
-                <Input />
+                <Input id="dob-id" 
+                  name="dob"
+                  onChange={formik.handleChange}
+                  value={formik.values.dob} />
               </div>
               <div className="flex flex-col space-y-4">
                 <Label htmlFor="email" className=" w-auto  font-semibold ">
@@ -263,7 +263,10 @@ export default function Contact() {
                 <Label htmlFor="phone" className=" w-auto  font-semibold ">
                   Address
                 </Label>
-                <Input></Input>
+                <Input id="address" 
+                  name="address"
+                  onChange={formik.handleChange}
+                  value={formik.values.address} />
               </div>
             </div>
           </Card>
@@ -319,28 +322,46 @@ export default function Contact() {
                 )}
               </div>
               <div className="flex flex-col gap-4 pt-2">
+                <p className="font-bold text-sm">Are you a new Patient</p>
+                <RadioGroup
+                  value={isnewPatient}
+                  onValueChange={(value) => setisnewPatient(value)}
+                  className="flex md:gap-12 "
+                  defaultValue="yes"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="yes" id="r1" className=" " />
+                    <Label htmlFor="r1">Yes</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="no" id="r2" className="" />
+                    <Label htmlFor="r2">No </Label>
+                  </div>
+                </RadioGroup>
+              </div>
+              <div className="flex flex-col gap-4 pt-2">
                 <p className="font-bold text-sm">Time of appointment</p>
 
                 <RadioGroup
-                  // value={selectedOption}
-                  // onValueChange={(value) => setSelectedOption(value)}
+                  value={timeOfAppointment}
+                  onValueChange={(value) => settimeOfAppointment(value)}
                   className="flex md:gap-12 "
                   defaultValue="as"
                 >
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="as" id="r1" className=" " />
+                    <RadioGroupItem value="soonest" id="r1" className=" " />
                     <Label htmlFor="r1">As soon as possible</Label>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="ass" id="r2" className="" />
+                    <RadioGroupItem value="this week" id="r2" className="" />
                     <Label htmlFor="r2">This week </Label>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="asss" id="r2" className="" />
+                    <RadioGroupItem value="next week" id="r2" className="" />
                     <Label htmlFor="r3">Next week </Label>
                   </div>{" "}
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="assss" id="r2" className="" />
+                    <RadioGroupItem value="anytime" id="r2" className="" />
                     <Label htmlFor="r4">I am in no rush </Label>
                   </div>
                 </RadioGroup>
@@ -350,8 +371,8 @@ export default function Contact() {
 
                 <div>
                   <RadioGroup
-                    // value={selectedDate}
-                    // onValueChange={(value) => setSelectedDate(value)}
+                    value={selectedAvailability}
+                    // onValueChange={(value) => setSelectedAvailability(value)}
                     defaultValue="anytime"
                     className="flex flex-col gap-4 md:flex-row md:gap-12"
                   >
@@ -403,7 +424,10 @@ export default function Contact() {
                         >
                           Subscriber ID
                         </Label>
-                        <Input id="subscriber-id" />
+                        <Input id="subscriber-id" 
+                           name="subscriberId"
+                           onChange={formik.handleChange}
+                           value={formik.values.subscriberId} />
                       </div>
                       <div className="flex flex-col space-y-4">
                         <Label
@@ -412,7 +436,10 @@ export default function Contact() {
                         >
                           Group ID
                         </Label>
-                        <Input id="group-id" />
+                        <Input id="group-id"
+                          name="groupId"
+                          onChange={formik.handleChange}
+                          value={formik.values.groupId} />
                       </div>
                       <div className="flex flex-col space-y-4">
                         <Label
@@ -421,7 +448,10 @@ export default function Contact() {
                         >
                           Insurer ID
                         </Label>
-                        <Input id="insurer-id" />
+                        <Input id="insurer-id"
+                          name="insurerId"
+                          onChange={formik.handleChange}
+                          value={formik.values.insurerId} />
                       </div>
                     </div>
                   )}
