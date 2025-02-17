@@ -8,6 +8,7 @@ interface TaskProps {
   distance?: string;
   index: number;
   activeCallIndex: number;
+  isAppointmentBooked: boolean;
   callStatus: {
     isInitiated: boolean;
   };
@@ -19,6 +20,7 @@ export const Task: React.FC<TaskProps> = ({
   index,
   activeCallIndex,
   distance,
+  isAppointmentBooked,
   callStatus,
 }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
@@ -37,8 +39,12 @@ export const Task: React.FC<TaskProps> = ({
       <td>
         {callStatus.isInitiated === false
           ? "..."
-          : activeCallIndex === index
-          ? "\uD83D\uDCDE Calling..." // Unicode for :telephone_receiver:
+          : activeCallIndex === index && !isAppointmentBooked
+          ? "\uD83D\uDCDE Calling..." // Unicode for 📞
+          : activeCallIndex === index && isAppointmentBooked
+          ? "\u2705" // Unicode for ✅
+          : activeCallIndex < index
+          ? "..."
           : "\u274C"}
       </td>
       <td>{distance}</td>

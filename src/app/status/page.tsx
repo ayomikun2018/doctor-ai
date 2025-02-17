@@ -19,7 +19,7 @@ import {
 } from "@dnd-kit/sortable";
 import Column from "@/components/draggable/column/columns";
 import axios from "axios";
-import { HomeIcon, Lightbulb, Phone } from "lucide-react";
+import { HomeIcon, Lightbulb, ArrowRight, OctagonX } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -31,6 +31,7 @@ export default function Status() {
   const [phoneNumbers, setPhoneNumbers] = useState<(string | null)[]>([]);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [showTranscript, setShowTranscript] = useState(false);
+  const [isAppointmentBooked, setIsAppointmentBooked] = useState(false);
   const [transcriptArray, setTranscriptArray] = useState([]);
   const [callStatus, setCallStatus] = useState({
     isInitiated: false,
@@ -127,7 +128,10 @@ export default function Status() {
   useEffect(() => {
     if (callStatus.isInitiated && callStatus.ssid && wsRef.current) {
       setShowTranscript(true);
-      setTranscriptArray([]);
+      setTranscriptArray((prev) => [
+        ...prev,
+        `--------------NEW CHAT BEGINS---------------\n`,
+      ]);
       console.log("ws listener added for id:", callStatus?.ssid);
       if (wsRef.current.readyState !== WebSocket.OPEN) {
         console.log("WebSocket not in OPEN state:", wsRef.current.readyState);
@@ -147,6 +151,17 @@ export default function Status() {
     }
   }, [callStatus, wsRef]);
 
+  const terminateRequest = () => {
+    // sent ws event to cancel call
+    wsRef?.current?.close();
+    setIsConfirmed(false);
+    setCallStatus({
+      isInitiated: false,
+      ssid: "",
+      email: "",
+    });
+  };
+
   const initiateCall = useCallback(
     async (doctorPhoneNumber: string, nameOfOrg: string) => {
       console.log("new call initiated for", doctorPhoneNumber, nameOfOrg);
@@ -163,26 +178,32 @@ export default function Status() {
         objective,
         subscriberId,
         groupId,
-        insurerId,
+        selectedOption,
         dob,
         address,
         selectedAvailability,
         timeOfAppointment,
         isnewPatient,
+        zipcode,
       } = formData;
 
-      let context = objective;
+      let context =
+        "Clinical concerns:" +
+        objective +
+        "; " +
+        "Patient has insurance:" +
+        selectedOption;
 
-      if (subscriberId) context += `; subscriberId:${subscriberId}`;
-      if (insurerId) context += `; insurerId:${insurerId}`;
-      if (groupId) context += `; groupId:${groupId}`;
-      if (dob) context += `; dateOfBirth:${dob}`;
-      if (address) context += `; address:${address}`;
+      if (subscriberId) context += `; Subscriber Id:${subscriberId}`;
+      if (groupId) context += `; Group Id:${groupId}`;
+      if (dob) context += `; Date of birth:${dob}`;
+      if (address) context += `; Address of the patient:${address}`;
       if (selectedAvailability)
-        context += `; availability:${selectedAvailability}`;
+        context += `; Availability of the patient:${selectedAvailability}`;
       if (timeOfAppointment)
-        context += `; timeOfAppointment:${timeOfAppointment}`;
-      if (isnewPatient) context += `; isnewPatient:${isnewPatient}`;
+        context += `; Time Of Appointment:${timeOfAppointment}`;
+      if (isnewPatient) context += `; Is New Patient:${isnewPatient}`;
+      if (zipcode) context += `; Zipcode:${zipcode}`;
 
       const data = {
         objective: "Schedule an appointment",
@@ -264,6 +285,7 @@ export default function Status() {
           // console.log({call_ended_result})
           if (call_ended_result?.data?.status == "yes") {
             toast.success("Appointment Booked Successfully");
+            setIsAppointmentBooked(true);
             ws?.close();
             return;
           } else {
@@ -359,6 +381,7 @@ export default function Status() {
                   tasks={doctors}
                   isDraggable={!isConfirmed}
                   callStatus={callStatus}
+                  isAppointmentBooked={isAppointmentBooked}
                 />
               </ScrollArea>
               <div className="flex justify-between">
@@ -401,12 +424,14 @@ export default function Status() {
               Home
             </Button>
           </Link>
-          <Link href="/contact">
-            <Button className="bg-blue-900 px-8 py-6">
+          {/* <Button onClick={()=>moveToNextDoctor()} disabled={!callStatus?.isInitiated} className="bg-blue-900 px-8 py-6">
               {" "}
-              <Phone /> Call more patients
+              <ArrowRight /> Move to Next Doctor
             </Button>
-          </Link>
+            <Button onClick={()=> terminateRequest()} disabled={!callStatus?.isInitiated}  className="bg-red-900 px-8 py-6">
+              {" "}
+              <OctagonX /> Terminate request
+            </Button> */}
         </div>
       </div>
     </div>
