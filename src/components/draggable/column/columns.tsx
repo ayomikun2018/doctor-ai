@@ -3,33 +3,30 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-
 import "./columns.css";
 import { Task } from "../tasks/tasks";
-
 interface TaskType {
   id: number;
   name: string;
   rating?: number;
   distance?: string;
 }
-
 export interface CallStatusType {
   isInitiated: boolean;
   ssid: string;
   email: string;
 }
-
 interface ColumnProps {
   tasks: TaskType[];
   activeCallIndex: number;
+  isAppointmentBooked: boolean;
   callStatus: CallStatusType;
 }
-
 const Column: React.FC<ColumnProps> = ({
   tasks,
   activeCallIndex,
   callStatus,
+  isAppointmentBooked,
 }) => {
   return (
     <div className="column">
@@ -37,7 +34,7 @@ const Column: React.FC<ColumnProps> = ({
         <thead>
           <tr>
             <th>#</th>
-            <th>Hospital Name</th>
+            <th>Hospital / Doctor Name</th>
             <th>Rating</th>
             <th>Call Status</th>
             <th>Distance</th>
@@ -54,6 +51,7 @@ const Column: React.FC<ColumnProps> = ({
                 rating={task.rating}
                 distance={task.distance}
                 activeCallIndex={activeCallIndex}
+                isAppointmentBooked={isAppointmentBooked}
                 callStatus={callStatus}
               />
             ))}
@@ -63,5 +61,4 @@ const Column: React.FC<ColumnProps> = ({
     </div>
   );
 };
-
 export default Column;

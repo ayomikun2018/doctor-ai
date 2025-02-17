@@ -46,7 +46,10 @@ const medicalSpecialtiesOptions = [
     value: "colon and rectal surgery (proctology)",
     label: "colon and Rectal surgery (Proctology)",
   },
-  { value: "Cosmetic & Restorative Dentistry", label: "Cosmetic & Restorative Dentistry"},
+  {
+    value: "Cosmetic & Restorative Dentistry",
+    label: "Cosmetic & Restorative Dentistry",
+  },
   { value: "critical care medicine", label: "Critical Care Medicine" },
   { value: "dentist", label: "Dentist" },
   { value: "Dermatology", label: "Dermatology" },
@@ -55,7 +58,10 @@ const medicalSpecialtiesOptions = [
   { value: "Endocrinology", label: "Endocrinology" },
   { value: "Family Medicine", label: "Family Medicine" },
   { value: "Gastroenterology", label: "Gastroenterology" },
-  { value: "General & Preventive Dentistry", label: "General & Preventive Dentistry"},
+  {
+    value: "General & Preventive Dentistry",
+    label: "General & Preventive Dentistry",
+  },
   { value: "General Surgery", label: "General Surgery" },
   { value: "Genetics", label: "Genetics" },
   { value: "Geriatrics", label: "Geriatrics" },
@@ -76,7 +82,10 @@ const medicalSpecialtiesOptions = [
   { value: "Pediatric Dentistry", label: "Pediatric Dentistry" },
   { value: "Pediatric Surgery", label: "Pediatric Surgery" },
   { value: "Pediatrics", label: "Pediatrics" },
-  { value: "Periodontics & Implant Dentistry", label: "Periodontics & Implant Dentistry" },
+  {
+    value: "Periodontics & Implant Dentistry",
+    label: "Periodontics & Implant Dentistry",
+  },
   {
     value: "Physical Medicine and Rehabilitation (Physiatry)",
     label: "Physical Medicine and Rehabilitation (Physiatry)",
@@ -88,6 +97,7 @@ const medicalSpecialtiesOptions = [
   { value: "Rheumatology", label: "Rheumatology" },
   { value: "Sleep Medicine", label: "Sleep Medicine" },
   { value: "Sports Medicine", label: "Sports Medicine" },
+  { value: "Therapy and Counseling", label: "Therapy and Counseling" },
   { value: "Urology", label: "Urology" },
   { value: "Vascular Surgery", label: "Vascular Surgery" },
 ];
@@ -122,15 +132,22 @@ export default function Contact() {
       patientHistory: "",
       objective: "",
       specialty: "",
-      groupId:"",
-      subscriberId:"",
-      insurerId:"",
-      dob:"",
-      address:""
+      groupId: "",
+      subscriberId: "",
+      zipcode: "",
+      dob: "",
+      address: "",
     },
     validationSchema,
     onSubmit: async (values) => {
-      const updatedValues = {...values, selectedAvailability,timeOfAppointment,isnewPatient}
+      const updatedValues = {
+        ...values,
+        selectedAvailability,
+        timeOfAppointment,
+        isnewPatient,
+        selectedOption,
+      };
+      // console.log(updatedValues)
       if (!selectedLocation) {
         toast.error("No location selected");
         return;
@@ -155,14 +172,13 @@ export default function Contact() {
     },
   });
 
-  useEffect(()=> {
-    if (selectedOption === 'no') {
-      formik.setFieldValue('insurerId', 'I do not have insurance');
-      formik.setFieldValue('subscriberId', '');
-      formik.setFieldValue('groupId', '');
+  useEffect(() => {
+    if (selectedOption === "no") {
+      formik.setFieldValue("subscriberId", "");
+      formik.setFieldValue("groupId", "");
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[selectedOption])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedOption]);
 
   const handleOnPlacesChanged = (index) => {
     if (inputRefs.current[index]) {
@@ -197,7 +213,7 @@ export default function Contact() {
       >
         <div className=" text-blue-950 grid grid-cols-2 gap-8">
           <Card className=" p-6 text-blue-950  ">
-            <p className="text-xl font-semibold ">User Details</p>
+            <p className="text-xl font-semibold ">Patient Details</p>
             <div className="grid gap-4 pt-4 ">
               <div className="flex flex-col space-y-4 pt-6">
                 <Label htmlFor="name" className="w-auto font-semibold ">
@@ -214,10 +230,12 @@ export default function Contact() {
                 <Label htmlFor="number" className="w-auto font-semibold ">
                   Date of birth
                 </Label>
-                <Input id="dob-id" 
+                <Input
+                  id="dob-id"
                   name="dob"
                   onChange={formik.handleChange}
-                  value={formik.values.dob} />
+                  value={formik.values.dob}
+                />
               </div>
               <div className="flex flex-col space-y-4">
                 <Label htmlFor="email" className=" w-auto  font-semibold ">
@@ -237,6 +255,17 @@ export default function Contact() {
                 {formik.errors.email && formik.touched.email && (
                   <div className="text-red-500">{formik.errors.email}</div>
                 )}
+              </div>
+              <div className="flex flex-col space-y-4">
+                <Label htmlFor="phone" className=" w-auto  font-semibold ">
+                  Zipcode
+                </Label>
+                <Input
+                  id="zipcode"
+                  name="zipcode"
+                  onChange={formik.handleChange}
+                  value={formik.values.zipcode}
+                />
               </div>
               <div className="flex flex-col space-y-4">
                 <Label htmlFor="phone" className=" w-auto  font-semibold ">
@@ -263,15 +292,17 @@ export default function Contact() {
                 <Label htmlFor="phone" className=" w-auto  font-semibold ">
                   Address
                 </Label>
-                <Input id="address" 
+                <Input
+                  id="address"
                   name="address"
                   onChange={formik.handleChange}
-                  value={formik.values.address} />
+                  value={formik.values.address}
+                />
               </div>
             </div>
           </Card>
           <Card className=" p-6 px-10 text-blue-950 ">
-            <p className="text-xl font-semibold">Address Details</p>
+            <p className="text-xl font-semibold">Appointment Details</p>
 
             <div className="grid gap-6 pt-4 ">
               <div className="flex flex-col space-y-4 w-full pt-4">
@@ -322,7 +353,7 @@ export default function Contact() {
                 )}
               </div>
               <div className="flex flex-col gap-4 pt-2">
-                <p className="font-bold text-sm">Are you a new Patient</p>
+                <p className="font-bold text-sm">Are you a new patient</p>
                 <RadioGroup
                   value={isnewPatient}
                   onValueChange={(value) => setisnewPatient(value)}
@@ -424,10 +455,12 @@ export default function Contact() {
                         >
                           Subscriber ID
                         </Label>
-                        <Input id="subscriber-id" 
-                           name="subscriberId"
-                           onChange={formik.handleChange}
-                           value={formik.values.subscriberId} />
+                        <Input
+                          id="subscriber-id"
+                          name="subscriberId"
+                          onChange={formik.handleChange}
+                          value={formik.values.subscriberId}
+                        />
                       </div>
                       <div className="flex flex-col space-y-4">
                         <Label
@@ -436,22 +469,12 @@ export default function Contact() {
                         >
                           Group ID
                         </Label>
-                        <Input id="group-id"
+                        <Input
+                          id="group-id"
                           name="groupId"
                           onChange={formik.handleChange}
-                          value={formik.values.groupId} />
-                      </div>
-                      <div className="flex flex-col space-y-4">
-                        <Label
-                          htmlFor="insurer-id"
-                          className="w-auto font-semibold"
-                        >
-                          Insurer ID
-                        </Label>
-                        <Input id="insurer-id"
-                          name="insurerId"
-                          onChange={formik.handleChange}
-                          value={formik.values.insurerId} />
+                          value={formik.values.groupId}
+                        />
                       </div>
                     </div>
                   )}
