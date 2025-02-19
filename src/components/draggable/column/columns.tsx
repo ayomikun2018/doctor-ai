@@ -36,7 +36,6 @@ const Column: React.FC<ColumnProps> = ({
           <tr>
             <th>#</th>
             <th>Hospital / Doctor Name</th>
-            <th>Hospital / Doctor Name</th>
             <th>Rating</th>
             <th>Call Status</th>
             <th>Distance</th>

@@ -58,12 +58,6 @@ export const Task: React.FC<TaskProps> = ({
           ? "\u2705" // Unicode for ✅
           : activeCallIndex < index
           ? "..."
-          : activeCallIndex === index && !isAppointmentBooked
-          ? "\uD83D\uDCDE Calling..." // Unicode for 📞
-          : activeCallIndex === index && isAppointmentBooked
-          ? "\u2705" // Unicode for ✅
-          : activeCallIndex < index
-          ? "..."
           : "\u274C"}
       </td>
       <td>{distance}</td>

@@ -18,7 +18,6 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import Column from "@/components/draggable/column/columns";
-import Swal from "sweetalert2";
 import axios from "axios";
 import { HomeIcon, Lightbulb, ArrowRight, OctagonX } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -156,15 +155,13 @@ export default function Status() {
     // sent ws event to cancel call
     wsRef?.current?.close();
     setIsConfirmed(false);
-    terminateCurrentCall(callStatus?.ssid);
-    setTimeout(() => {
-      setCallStatus({
-        isInitiated: false,
-        ssid: "",
-        email: "",
-      });
-    }, 500);
+    setCallStatus({
+      isInitiated: false,
+      ssid: "",
+      email: "",
+    });
   };
+
   const initiateCall = useCallback(
     async (doctorPhoneNumber: string, nameOfOrg: string) => {
       console.log("new call initiated for", doctorPhoneNumber, nameOfOrg);
@@ -188,7 +185,6 @@ export default function Status() {
         timeOfAppointment,
         isnewPatient,
         zipcode,
-        insurer,
       } = formData;
 
       let context =
@@ -198,7 +194,6 @@ export default function Status() {
         "Patient has insurance:" +
         selectedOption;
 
-      if (insurer) context += `; Insurance Provider:${insurer}`;
       if (subscriberId) context += `; Subscriber Id:${subscriberId}`;
       if (groupId) context += `; Group Id:${groupId}`;
       if (dob) context += `; Date of birth:${dob}`;
@@ -238,11 +233,9 @@ export default function Status() {
     []
   );
 
-  const moveToNextDoctor = async (id: string) => {
+  const moveToNextDoctor = async () => {
     let newIndex = 0;
-    if (id) {
-      terminateCurrentCall(id);
-    }
+
     // Move to the next doctor
     setActiveCallIndex((prevIndex) => {
       newIndex = prevIndex + 1;
@@ -289,20 +282,11 @@ export default function Status() {
         // console.log("Call Ended Data:", data);
         setTimeout(async () => {
           const call_ended_result = await handleEndCall(data?.call_sid);
-          console.log({ call_ended_result });
-          if (call_ended_result?.status == "yes") {
-            // toast.success("Appointment Booked Successfully");
-            Swal.fire({
-              icon: "success",
-              title: "Appointment Booked",
-              text:
-                call_ended_result?.confirmation_message ??
-                "Appointment Booked Successfully",
-              confirmButtonText: "Okay",
-              //confirmButtonColor:""
-            });
+          // console.log({call_ended_result})
+          if (call_ended_result?.data?.status == "yes") {
+            toast.success("Appointment Booked Successfully");
             setIsAppointmentBooked(true);
-            wsRef?.current?.close();
+            ws?.close();
             return;
           } else {
             toast.warning(
@@ -365,19 +349,6 @@ export default function Status() {
       console.log(
         "Failed to end call after multiple attempts. Returning true."
       );
-      return true;
-    }
-  };
-  const terminateCurrentCall = async (id: string): Promise<any> => {
-    // console.log(id,'xxx')
-    try {
-      const resp = await axios.post(
-        `https://callai-backend-243277014955.us-central1.run.app/api/terminate-call`,
-        { call_id: id }
-      );
-      return resp.data;
-    } catch (error) {
-      console.error("Error ending call:", error);
       return true;
     }
   };
@@ -453,22 +424,14 @@ export default function Status() {
               Home
             </Button>
           </Link>
-          <Button
-            onClick={() => moveToNextDoctor(callStatus?.ssid)}
-            disabled={!callStatus?.isInitiated}
-            className="bg-blue-900 px-8 py-6"
-          >
-            {" "}
-            <ArrowRight /> Move to Next Doctor
-          </Button>
-          <Button
-            onClick={() => terminateRequest()}
-            disabled={!callStatus?.isInitiated}
-            className="bg-red-900 px-8 py-6"
-          >
-            {" "}
-            <OctagonX /> Terminate request
-          </Button>
+          {/* <Button onClick={()=>moveToNextDoctor()} disabled={!callStatus?.isInitiated} className="bg-blue-900 px-8 py-6">
+              {" "}
+              <ArrowRight /> Move to Next Doctor
+            </Button>
+            <Button onClick={()=> terminateRequest()} disabled={!callStatus?.isInitiated}  className="bg-red-900 px-8 py-6">
+              {" "}
+              <OctagonX /> Terminate request
+            </Button> */}
         </div>
       </div>
     </div>
