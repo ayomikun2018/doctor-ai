@@ -98,13 +98,135 @@ const medicalSpecialtiesOptions = [
   { value: "Sleep Medicine", label: "Sleep Medicine" },
   { value: "Sports Medicine", label: "Sports Medicine" },
   { value: "Therapy and Counseling", label: "Therapy and Counseling" },
+  { value: "Therapy and Counseling", label: "Therapy and Counseling" },
   { value: "Urology", label: "Urology" },
   { value: "Vascular Surgery", label: "Vascular Surgery" },
 ];
+const insurerOptions = [
+  {value: "Aetna", label: "Aetna"},
+  {value: "Aflac", label: "Aflac"},
+  {value: "Alignment Healthcare", label: "Alignment Healthcare"},
+  {value: "Allstate Insurance Company", label: "Allstate Insurance Company"},
+  {value: "AlohaCare", label: "AlohaCare"},
+  {value: "AMA Insurance Agency, Inc.", label: "AMA Insurance Agency, Inc."},
+  {value: "American Fidelity Assurance Company", label: "American Fidelity Assurance Company"},
+  {value: "American Specialty Health", label: "American Specialty Health"},
+  {value: "AmeriHealth", label: "AmeriHealth"},
+  {value: "AmeriHealth Administrators", label: "AmeriHealth Administrators"},
+  {value: "AmeriHealth Caritas Family of Companies", label: "AmeriHealth Caritas Family of Companies"},
+  {value: "Arkansas BlueCross Blue Shield", label: "Arkansas BlueCross Blue Shield"},
+  {value: "AultCare Corporation", label: "AultCare Corporation"},
+  {value: "Avera Health Plans", label: "Avera Health Plans"},
+  {value: "AvMed Health Plan", label: "AvMed Health Plan"},
+  {value: "Bankers Life and Casualty Company", label: "Bankers Life and Casualty Company"},
+  {value: "Birdsong Hearing Benefits", label: "Birdsong Hearing Benefits"},
+  {value: "Blue Cross and Blue Shield of Georgia", label: "Blue Cross and Blue Shield of Georgia"},
+  {value: "Blue Cross and Blue Shield of Illinois", label: "Blue Cross and Blue Shield of Illinois"},
+  {value: "Blue Cross and Blue Shield of Montana", label: "Blue Cross and Blue Shield of Montana"},
+  {value: "Blue Cross and Blue Shield of New Mexico", label: "Blue Cross and Blue Shield of New Mexico"},
+  {value: "Blue Cross Blue Shield of Michigan", label: "Blue Cross Blue Shield of Michigan"},
+  {value: "Blue Cross Blue Shield of North Carolina", label: "Blue Cross Blue Shield of North Carolina"},
+  {value: "Blue Cross of Idaho", label: "Blue Cross of Idaho"},
+  {value: "Blue Shield of California", label: "Blue Shield of California"},
+  {value: "BlueCross BlueShield of Oklahoma", label: "BlueCross BlueShield of Oklahoma"},
+  {value: "BlueCross BlueShield of Tennessee", label: "BlueCross BlueShield of Tennessee"},
+  {value: "BlueCross BlueShield of Texas", label: "BlueCross BlueShield of Texas"},
+  {value: "Cambia Health Solutions", label: "Cambia Health Solutions"},
+  {value: "Capital District Physicians´ Health Plan", label: "Capital District Physicians´ Health Plan"},
+  {value: "CareFirst", label: "CareFirst"},
+  {value: "CareOregon", label: "CareOregon"},
+  {value: "CareSource", label: "CareSource"},
+  {value: "Celtic Insurance Company", label: "Celtic Insurance Company"},
+  {value: "CENTENE Corp.", label: "CENTENE Corp."},
+  {value: "Clever Care Health Plan", label: "Clever Care Health Plan"},
+  {value: "CNO Financial Group", label: "CNO Financial Group"},
+  {value: "Commonwealth Care Alliance", label: "Commonwealth Care Alliance"},
+  {value: "Community Health Network of Connecticut", label: "Community Health Network of Connecticut"},
+  {value: "Curative Inc", label: "Curative Inc"},
+  {value: "CVS Health", label: "CVS Health"},
+  {value: "Davies Life & Health", label: "Davies Life & Health"},
+  {value: "Dean Health Plan, Inc.", label: "Dean Health Plan, Inc."},
+  {value: "Delta Dental Plans Association", label: "Delta Dental Plans Association"},
+  {value: "Elevance Health", label: "Elevance Health"},
+  {value: "FedPoint", label: "FedPoint"},
+  {value: "Fidelity", label: "Fidelity"},
+  {value: "Florida Blue", label: "Florida Blue"},
+  {value: "Gen Re", label: "Gen Re"},
+  {value: "Guarantee Trust Life Insurance Company", label: "Guarantee Trust Life Insurance Company"},
+  {value: "Harvard Pilgrim Health Care", label: "Harvard Pilgrim Health Care"},
+  {value: "Health Alliance Medical Plan", label: "Health Alliance Medical Plan"},
+  {value: "Health Care Service Corporation", label: "Health Care Service Corporation"},
+  {value: "Health Plan of San Joaquin", label: "Health Plan of San Joaquin"},
+  {value: "HealthEquity", label: "HealthEquity"},
+  {value: "Healthfirst, Inc.", label: "Healthfirst, Inc."},
+  {value: "HealthPartners", label: "HealthPartners"},
+  {value: "Highmark Health", label: "Highmark Health"},
+  {value: "Hometown Health Plan", label: "Hometown Health Plan"},
+  {value: "Horizon BC/BS of New Jersey", label: "Horizon BC/BS of New Jersey"},
+  {value: "Humana Inc.", label: "Humana Inc."},
+  {value: "Independence Blue Cross", label: "Independence Blue Cross"},
+  {value: "Independent Health", label: "Independent Health"},
+  {value: "Insurance Administrative Solutions, L.L.C.", label: "Insurance Administrative Solutions, L.L.C."},
+  {value: "John Hancock Financial Services", label: "John Hancock Financial Services"},
+  {value: "Johns Hopkins Health Plans", label: "Johns Hopkins Health Plans"},
+  {value: "Kaiser Permanente", label: "Kaiser Permanente"},
+  {value: "L.A. Care", label: "L.A. Care"},
+  {value: "Liberty Dental Plan", label: "Liberty Dental Plan"},
+  {value: "LifeSecure Insurance Company", label: "LifeSecure Insurance Company"},
+  {value: "Magellan Health", label: "Magellan Health"},
+  {value: "Martin’s Point Health Care", label: "Martin’s Point Health Care"},
+  {value: "Mass General Brigham Health Plan", label: "Mass General Brigham Health Plan"},
+  {value: "Medica Health Plan", label: "Medica Health Plan"},
+  {value: "Medical Card System (MCS)", label: "Medical Card System (MCS)"},
+  {value: "Medical Mutual of Ohio", label: "Medical Mutual of Ohio"},
+  {value: "Meridian Health Plan", label: "Meridian Health Plan"},
+  {value: "MetroPlusHealth", label: "MetroPlusHealth"},
+  {value: "Moda Health", label: "Moda Health"},
+  {value: "Molina Healthcare", label: "Molina Healthcare"},
+  {value: "MVP Health Care", label: "MVP Health Care"},
+  {value: "National General Accident & Health", label: "National General Accident & Health"},
+  {value: "National Guardian Life", label: "National Guardian Life"},
+  {value: "Neighborhood Health Plan of Rhode Island", label: "Neighborhood Health Plan of Rhode Island"},
+  {value: "New York Life Insurance Company", label: "New York Life Insurance Company"},
+  {value: "PacificSource Health Plans", label: "PacificSource Health Plans"},
+  {value: "Paramount Health Care", label: "Paramount Health Care"},
+  {value: "Physicians Mutual Insurance Company", label: "Physicians Mutual Insurance Company"},
+  {value: "Point32Health", label: "Point32Health"},
+  {value: "Providence Health Plans", label: "Providence Health Plans"},
+  {value: "Quartz Health Solutions", label: "Quartz Health Solutions"},
+  {value: "Regence BC/BS of Oregon", label: "Regence BC/BS of Oregon"},
+  {value: "Regence Blue Shield", label: "Regence Blue Shield"},
+  {value: "Regence BlueCross BlueShield of Utah", label: "Regence BlueCross BlueShield of Utah"},
+  {value: "Regence BlueShield of Idaho", label: "Regence BlueShield of Idaho"},
+  {value: "Sanford Health Plans", label: "Sanford Health Plans"},
+  {value: "SCAN Health Plan", label: "SCAN Health Plan"},
+  {value: "Sentara Healthcare", label: "Sentara Healthcare"},
+  {value: "Sharp Health Plan", label: "Sharp Health Plan"},
+  {value: "St. Luke’s Health Plan", label: "St. Luke’s Health Plan"},
+  {value: "State Farm Insurance Companies", label: "State Farm Insurance Companies"},
+  {value: "SummaCare", label: "SummaCare"},
+  {value: "Sutter Health Plan", label: "Sutter Health Plan"},
+  {value: "Swiss Re America", label: "Swiss Re America"},
+  {value: "The Cigna Group", label: "The Cigna Group"},
+  {value: "Thrivent Financial for Lutherans", label: "Thrivent Financial for Lutherans"},
+  {value: "Trustmark Insurance Company", label: "Trustmark Insurance Company"},
+  {value: "Tufts Health Plan", label: "Tufts Health Plan"},
+  {value: "UCare", label: "UCare"},
+  {value: "UNICARE Life & Health Insurance Company", label: "UNICARE Life & Health Insurance Company"},
+  {value: "University Health Alliance", label: "University Health Alliance"},
+  {value: "UPMC Health Insurance Plans", label: "UPMC Health Insurance Plans"},
+  {value: "USAA", label: "USAA"},
+  {value: "VIVA Health, Inc.", label: "VIVA Health, Inc."},
+  {value: "Wellabe", label: "Wellabe"},
+  {value: "Wellfleet", label: "Wellfleet"},
+  {value: "Western Health Advantage", label: "Western Health Advantage"},
+  {value: "Zurich North America", label: "Zurich North America"}
+  
+]
 const validationSchema = Yup.object().shape({
   phoneNumber: Yup.string().required("Phone number is required"),
   email: Yup.string().email("Invalid email").required("Email is required"),
-  objective: Yup.string().required("Objective is required"),
+  objective: Yup.string().required("Required"),
   specialty: Yup.string().required("Specialty is required"), // Ensure specialty is required
 });
 
@@ -114,7 +236,10 @@ export default function Contact() {
   const [timeOfAppointment, settimeOfAppointment] = useState("soonest");
   const [isnewPatient, setisnewPatient] = useState("yes");
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const [addressLocation, setAddressLocation] = useState(null);
+  const [isLoading,setisLoading] = useState(false)
   const inputRefs = useRef([]);
+  const addressRefs = useRef([]);
   const [selectedOption, setSelectedOption] = useState("no");
 
   const [doctors, setDoctors] = useState([]);
@@ -132,22 +257,18 @@ export default function Contact() {
       patientHistory: "",
       objective: "",
       specialty: "",
-      groupId: "",
-      subscriberId: "",
-      zipcode: "",
-      dob: "",
-      address: "",
+      groupId:"",
+      subscriberId:"",
+      insurer: "",
+      zipcode:"",
+      dob:"",
+      address:""
     },
     validationSchema,
     onSubmit: async (values) => {
-      const updatedValues = {
-        ...values,
-        selectedAvailability,
-        timeOfAppointment,
-        isnewPatient,
-        selectedOption,
-      };
+      const updatedValues = {...values, selectedAvailability,timeOfAppointment,isnewPatient,selectedOption}
       // console.log(updatedValues)
+      setisLoading(true)
       if (!selectedLocation) {
         toast.error("No location selected");
         return;
@@ -172,10 +293,10 @@ export default function Contact() {
     },
   });
 
-  useEffect(() => {
-    if (selectedOption === "no") {
-      formik.setFieldValue("subscriberId", "");
-      formik.setFieldValue("groupId", "");
+  useEffect(()=> {
+    if (selectedOption === 'no') {
+      formik.setFieldValue('subscriberId', '');
+      formik.setFieldValue('groupId', '');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedOption]);
@@ -188,6 +309,17 @@ export default function Contact() {
         const lat = place.geometry.location.lat();
         const lng = place.geometry.location.lng();
         setSelectedLocation({ lat, lng });
+      }
+    }
+  };
+  const handleOnAddressChanged = (index) => {
+    if (addressRefs.current[index]) {
+      const places = addressRefs.current[index].getPlaces();
+      if (places && places.length > 0) {
+        // <-- Added defensive check
+        const address = places[0];
+        //console.log(address)
+        formik.setFieldValue('address',address?.formatted_address)
       }
     }
   };
@@ -213,6 +345,7 @@ export default function Contact() {
       >
         <div className=" text-blue-950 grid grid-cols-2 gap-8">
           <Card className=" p-6 text-blue-950  ">
+            <p className="text-xl font-semibold ">Patient Details</p>
             <p className="text-xl font-semibold ">Patient Details</p>
             <div className="grid gap-4 pt-4 ">
               <div className="flex flex-col space-y-4 pt-6">
@@ -289,19 +422,31 @@ export default function Contact() {
                 )}
               </div>
               <div className="flex flex-col space-y-4">
-                <Label htmlFor="phone" className=" w-auto  font-semibold ">
+                <Label htmlFor="address" className=" w-auto  font-semibold ">
                   Address
                 </Label>
-                <Input
-                  id="address"
-                  name="address"
+                {isLoaded && (
+                  <StandaloneSearchBox
+                    onLoad={(ref) => (addressRefs.current[0] = ref)}
+                    onPlacesChanged={() => handleOnAddressChanged(0)}
+                  >
+                    <Input placeholder="Search Address" />
+                  </StandaloneSearchBox>
+                )}
+              </div>
+              <div className="flex flex-col space-y-4">
+                <Label htmlFor="phone" className=" w-auto  font-semibold ">
+                  Zipcode
+                </Label>
+                <Input id="zipcode" 
+                  name="zipcode"
                   onChange={formik.handleChange}
-                  value={formik.values.address}
-                />
+                  value={formik.values.zipcode} />
               </div>
             </div>
           </Card>
           <Card className=" p-6 px-10 text-blue-950 ">
+            <p className="text-xl font-semibold">Appointment Details</p>
             <p className="text-xl font-semibold">Appointment Details</p>
 
             <div className="grid gap-6 pt-4 ">
@@ -353,6 +498,7 @@ export default function Contact() {
                 )}
               </div>
               <div className="flex flex-col gap-4 pt-2">
+                <p className="font-bold text-sm">Are you a new patient</p>
                 <p className="font-bold text-sm">Are you a new patient</p>
                 <RadioGroup
                   value={isnewPatient}
@@ -448,6 +594,31 @@ export default function Contact() {
 
                   {selectedOption === "yes" && (
                     <div className="flex flex-col space-y-2">
+                        <div className="flex flex-col space-y-4 mb-4">
+                        <Label className="font-semibold" htmlFor="insurer">
+                          Select Insurance (Optional)
+                        </Label>
+                        <Select
+                          id="insurer"
+                          name="insurer"
+                          value={formik.values.insurer || ""}
+                          onValueChange={(value) => {
+                            formik.setFieldValue("insurer", value);
+                          }}
+                        >
+                          <SelectTrigger
+                          >
+                            <SelectValue placeholder="Select insurer" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {insurerOptions.map((p) => (
+                              <SelectItem key={p.value} value={p.value}>
+                                {p.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
                       <div className="flex flex-col space-y-4">
                         <Label
                           htmlFor="subscriber-id"
@@ -473,8 +644,7 @@ export default function Contact() {
                           id="group-id"
                           name="groupId"
                           onChange={formik.handleChange}
-                          value={formik.values.groupId}
-                        />
+                          value={formik.values.groupId} />
                       </div>
                     </div>
                   )}
@@ -509,6 +679,7 @@ export default function Contact() {
         > */}
         <div className="flex items-center justify-center">
           <Button
+          disabled={isLoading}
             className=" w-[20%] mt-8 bg-blue-950"
             //onClick={handleFindDoctors}
           >

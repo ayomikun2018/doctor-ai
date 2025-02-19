@@ -5,6 +5,7 @@ interface TaskProps {
   id: string;
   title: string;
   rating?: number;
+  website: string;
   distance?: string;
   index: number;
   activeCallIndex: number;
@@ -20,6 +21,7 @@ export const Task: React.FC<TaskProps> = ({
   index,
   activeCallIndex,
   distance,
+  website,
   isAppointmentBooked,
   callStatus,
 }) => {
@@ -34,10 +36,27 @@ export const Task: React.FC<TaskProps> = ({
   return (
     <tr ref={setNodeRef} style={style} {...attributes} {...listeners}>
       <td>{index + 1}</td>
-      <td>{title}</td>
+      <td>
+        <a
+          href={website}
+          target="_blank"
+          className="underline cursor-pointer hover:text-blue-800"
+          onClick={(e) => {
+            e.stopPropagation(); // Prevent drag interference
+          }}
+        >
+          {title}
+        </a>
+      </td>
       <td>{rating !== undefined ? `\u2B50 ${rating}` : `\u2B50 -`}</td>
       <td>
         {callStatus.isInitiated === false
+          ? "..."
+          : activeCallIndex === index && !isAppointmentBooked
+          ? "\uD83D\uDCDE Calling..." // Unicode for 📞
+          : activeCallIndex === index && isAppointmentBooked
+          ? "\u2705" // Unicode for ✅
+          : activeCallIndex < index
           ? "..."
           : activeCallIndex === index && !isAppointmentBooked
           ? "\uD83D\uDCDE Calling..." // Unicode for 📞

@@ -9,6 +9,7 @@ interface TaskType {
   id: number;
   name: string;
   rating?: number;
+  website: string;
   distance?: string;
 }
 export interface CallStatusType {
@@ -35,6 +36,7 @@ const Column: React.FC<ColumnProps> = ({
           <tr>
             <th>#</th>
             <th>Hospital / Doctor Name</th>
+            <th>Hospital / Doctor Name</th>
             <th>Rating</th>
             <th>Call Status</th>
             <th>Distance</th>
@@ -47,10 +49,12 @@ const Column: React.FC<ColumnProps> = ({
                 key={task.id}
                 id={task.id.toString()}
                 index={index}
+                website={task.website}
                 title={task.name}
                 rating={task.rating}
                 distance={task.distance}
                 activeCallIndex={activeCallIndex}
+                isAppointmentBooked={isAppointmentBooked}
                 isAppointmentBooked={isAppointmentBooked}
                 callStatus={callStatus}
               />
