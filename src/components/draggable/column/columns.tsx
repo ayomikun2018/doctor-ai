@@ -55,7 +55,6 @@ const Column: React.FC<ColumnProps> = ({
                 distance={task.distance}
                 activeCallIndex={activeCallIndex}
                 isAppointmentBooked={isAppointmentBooked}
-                isAppointmentBooked={isAppointmentBooked}
                 callStatus={callStatus}
               />
             ))}

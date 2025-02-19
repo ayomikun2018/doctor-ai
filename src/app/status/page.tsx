@@ -1,6 +1,12 @@
 //@ts-nocheck
 "use client";
-import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import React, {
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+  useRef,
+} from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/general-components/navbar";
 import { Button } from "@/components/ui/button";
@@ -12,14 +18,12 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import Column from "@/components/draggable/column/columns";
-import Swal from 'sweetalert2'
+import Swal from "sweetalert2";
 import axios from "axios";
-import { HomeIcon, Lightbulb, ArrowRight, OctagonX } from "lucide-react";
 import { HomeIcon, Lightbulb, ArrowRight, OctagonX } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import { toast } from "sonner";
-
 
 export default function Status() {
   const wsRef = useRef<WebSocket | null>(null);
@@ -28,7 +32,7 @@ export default function Status() {
   const [phoneNumbers, setPhoneNumbers] = useState<(string | null)[]>([]);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [showTranscript, setShowTranscript] = useState(false);
-  const [isAppointmentBooked,setIsAppointmentBooked] = useState(false)
+  const [isAppointmentBooked, setIsAppointmentBooked] = useState(false);
   const [transcriptArray, setTranscriptArray] = useState([]);
   const [callStatus, setCallStatus] = useState({
     isInitiated: false,
@@ -95,30 +99,32 @@ export default function Status() {
       })
     );
     setPhoneNumbers(numbers);
-     // console.log(doctors,numbers,'xxxx')
+    // console.log(doctors,numbers,'xxxx')
   };
-useEffect(()=> {
-  if(doctors.length){
-    // console.log(doctors)
-    getPhoneNumbers()
-  }
-// eslint-disable-next-line react-hooks/exhaustive-deps
-},[doctors])
+  useEffect(() => {
+    if (doctors.length) {
+      // console.log(doctors)
+      getPhoneNumbers();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [doctors]);
 
-
-  const handleConfirmSequence = useCallback(async()=> {
+  const handleConfirmSequence = useCallback(async () => {
     await connectWebSocket();
     try {
       setIsConfirmed(true); // Disable button and dragging
-      const firstDoctorPhoneNumber =   phoneNumbers[activeCallIndex]; // '+2348168968260'
-      await initiateCall(firstDoctorPhoneNumber, doctors[activeCallIndex]?.name)
-      return
+      const firstDoctorPhoneNumber = phoneNumbers[activeCallIndex]; // '+2348168968260'
+      await initiateCall(
+        firstDoctorPhoneNumber,
+        doctors[activeCallIndex]?.name
+      );
+      return;
     } catch (error) {
       console.error("Error fetching phone numbers or initiating call:", error);
       setIsConfirmed(false); // Re-enable button and dragging if there's an error
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[activeCallIndex,phoneNumbers,doctors])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeCallIndex, phoneNumbers, doctors]);
 
   useEffect(() => {
     if (callStatus.isInitiated && callStatus.ssid && wsRef.current) {
@@ -127,128 +133,152 @@ useEffect(()=> {
         ...prev,
         `--------------NEW CHAT BEGINS---------------\n`,
       ]);
-      console.log('ws listener added for id:', callStatus?.ssid)
+      console.log("ws listener added for id:", callStatus?.ssid);
       if (wsRef.current.readyState !== WebSocket.OPEN) {
-        console.log('WebSocket not in OPEN state:', wsRef.current.readyState);
+        console.log("WebSocket not in OPEN state:", wsRef.current.readyState);
         return;
       }
       try {
         wsRef.current.send(
-          JSON.stringify({ 
-            event: "start", 
-            transcription_id: callStatus.ssid 
+          JSON.stringify({
+            event: "start",
+            transcription_id: callStatus.ssid,
           })
         );
         // console.log('WebSocket message sent successfully');
       } catch (error) {
-        console.log('Failed to send WebSocket message:', error);
+        console.log("Failed to send WebSocket message:", error);
       }
     }
-  }, [callStatus,wsRef]);
+  }, [callStatus, wsRef]);
 
   const terminateRequest = () => {
     // sent ws event to cancel call
     wsRef?.current?.close();
     setIsConfirmed(false);
-    terminateCurrentCall(callStatus?.ssid)
+    terminateCurrentCall(callStatus?.ssid);
     setTimeout(() => {
       setCallStatus({
         isInitiated: false,
         ssid: "",
         email: "",
-      })
-    }, 500);
-
-  }
-  const initiateCall = useCallback(async (doctorPhoneNumber: string, nameOfOrg: string) => {
-    console.log('new call initiated for', doctorPhoneNumber, nameOfOrg);
-    const formData = JSON.parse(sessionStorage.getItem("formData"));
-    if (!formData) {
-      console.error("No formData found in sessionStorage.");
-      return;
-    }
-
-    const { email, phoneNumber, patientName, objective, subscriberId, groupId, selectedOption, dob, address, selectedAvailability, timeOfAppointment, isnewPatient, zipcode, insurer } = formData;
-
-    let context = 'Clinical concerns:' + objective+'; ' +"Patient has insurance:"+selectedOption;
-
-    if (insurer) context += `; Insurance Provider:${insurer}`;
-    if (subscriberId) context += `; Subscriber Id:${subscriberId}`;
-    if (groupId) context += `; Group Id:${groupId}`;
-    if (dob) context += `; Date of birth:${dob}`;
-    if (address) context += `; Address of the patient:${address}`;
-    if (selectedAvailability) context += `; Availability of the patient:${selectedAvailability}`;
-    if (timeOfAppointment) context += `; Time Of Appointment:${timeOfAppointment}`;
-    if (isnewPatient) context += `; Is New Patient:${isnewPatient}`;
-    if (zipcode) context += `; Zipcode:${zipcode}`;
-
-    const data = {
-      objective: "Schedule an appointment",
-      context: context,
-      caller_number: phoneNumber,
-      caller_name: patientName,
-      name_of_org: nameOfOrg,
-      caller_email: email,
-      phone_number: doctorPhoneNumber,
-    };
-    // console.log(data);
-    try {
-      const callResponse = await axios.post(
-        "https://callai-backend-243277014955.us-central1.run.app/api/assistant-initiate-call",
-        data
-      );
-      setCallStatus({
-        isInitiated: true,
-        ssid: callResponse.data.call_id,
-        email: email,
       });
-    } catch (error) {
-      console.log(error, 'error initiating bland AI');
-      toast.error(error?.response?.data?.detail);
-    }
-  }, []);
+    }, 500);
+  };
+  const initiateCall = useCallback(
+    async (doctorPhoneNumber: string, nameOfOrg: string) => {
+      console.log("new call initiated for", doctorPhoneNumber, nameOfOrg);
+      const formData = JSON.parse(sessionStorage.getItem("formData"));
+      if (!formData) {
+        console.error("No formData found in sessionStorage.");
+        return;
+      }
+
+      const {
+        email,
+        phoneNumber,
+        patientName,
+        objective,
+        subscriberId,
+        groupId,
+        selectedOption,
+        dob,
+        address,
+        selectedAvailability,
+        timeOfAppointment,
+        isnewPatient,
+        zipcode,
+        insurer,
+      } = formData;
+
+      let context =
+        "Clinical concerns:" +
+        objective +
+        "; " +
+        "Patient has insurance:" +
+        selectedOption;
+
+      if (insurer) context += `; Insurance Provider:${insurer}`;
+      if (subscriberId) context += `; Subscriber Id:${subscriberId}`;
+      if (groupId) context += `; Group Id:${groupId}`;
+      if (dob) context += `; Date of birth:${dob}`;
+      if (address) context += `; Address of the patient:${address}`;
+      if (selectedAvailability)
+        context += `; Availability of the patient:${selectedAvailability}`;
+      if (timeOfAppointment)
+        context += `; Time Of Appointment:${timeOfAppointment}`;
+      if (isnewPatient) context += `; Is New Patient:${isnewPatient}`;
+      if (zipcode) context += `; Zipcode:${zipcode}`;
+
+      const data = {
+        objective: "Schedule an appointment",
+        context: context,
+        caller_number: phoneNumber,
+        caller_name: patientName,
+        name_of_org: nameOfOrg,
+        caller_email: email,
+        phone_number: doctorPhoneNumber,
+      };
+      // console.log(data);
+      try {
+        const callResponse = await axios.post(
+          "https://callai-backend-243277014955.us-central1.run.app/api/assistant-initiate-call",
+          data
+        );
+        setCallStatus({
+          isInitiated: true,
+          ssid: callResponse.data.call_id,
+          email: email,
+        });
+      } catch (error) {
+        console.log(error, "error initiating bland AI");
+        toast.error(error?.response?.data?.detail);
+      }
+    },
+    []
+  );
 
   const moveToNextDoctor = async (id: string) => {
     let newIndex = 0;
-    if(id){
-      terminateCurrentCall(id)
+    if (id) {
+      terminateCurrentCall(id);
     }
     // Move to the next doctor
     setActiveCallIndex((prevIndex) => {
       newIndex = prevIndex + 1;
       return newIndex;
     });
-     // console.log(newIndex,activeCallIndex)
-    if (newIndex+1 <= doctors.length) {
+    // console.log(newIndex,activeCallIndex)
+    if (newIndex + 1 <= doctors.length) {
       const nextDoctor = doctors[newIndex];
       console.log("Calling next doctor:", nextDoctor);
 
-      const phoneNumber = phoneNumbers[newIndex]  //+2348168968260
-      const nameOfOrg = nextDoctor?.name  //+2348168968260
+      const phoneNumber = phoneNumbers[newIndex]; //+2348168968260
+      const nameOfOrg = nextDoctor?.name; //+2348168968260
       if (phoneNumber) {
-        await initiateCall(phoneNumber,nameOfOrg);
+        await initiateCall(phoneNumber, nameOfOrg);
       } else {
         console.log("No phone number available for the next doctor.");
         toast.error("Next doctor has no phone number. Skipping...");
-       // setActiveCallIndex((prevIndex) => prevIndex + 1); // Move to the next doctor
+        // setActiveCallIndex((prevIndex) => prevIndex + 1); // Move to the next doctor
       }
-    }else {
+    } else {
       toast.success("All doctors have been called successfully..");
-      setIsConfirmed(false)
+      setIsConfirmed(false);
     }
-  }
+  };
   const connectWebSocket = () => {
-    if(wsRef?.current){
+    if (wsRef?.current) {
       //check if exisiting connection exists and disconnect
-      console.log('disconnect exisiting connection if it exists...')
-      wsRef?.current?.close()
+      console.log("disconnect exisiting connection if it exists...");
+      wsRef?.current?.close();
     }
     wsRef.current = new WebSocket(
       "wss://callai-backend-243277014955.us-central1.run.app/ws/notifications"
     );
 
     wsRef.current.onopen = () => {
-      console.log("WebSocket connected successfully and opened.",);
+      console.log("WebSocket connected successfully and opened.");
     };
 
     wsRef.current.onmessage = async (event) => {
@@ -256,26 +286,29 @@ useEffect(()=> {
       // console.log("WebSocket Message:", data);
 
       if (data.event === "call_ended") {
-       // console.log("Call Ended Data:", data);
-        setTimeout(async() => {
-          const call_ended_result = await handleEndCall(data?.call_sid)
-          console.log({call_ended_result})
+        // console.log("Call Ended Data:", data);
+        setTimeout(async () => {
+          const call_ended_result = await handleEndCall(data?.call_sid);
+          console.log({ call_ended_result });
           if (call_ended_result?.status == "yes") {
             // toast.success("Appointment Booked Successfully");
             Swal.fire({
               icon: "success",
               title: "Appointment Booked",
-              text: call_ended_result?.confirmation_message ?? 'Appointment Booked Successfully',
-              confirmButtonText:"Okay",
+              text:
+                call_ended_result?.confirmation_message ??
+                "Appointment Booked Successfully",
+              confirmButtonText: "Okay",
               //confirmButtonColor:""
             });
-            setIsAppointmentBooked(true)
+            setIsAppointmentBooked(true);
             wsRef?.current?.close();
             return;
-          }
-          else {
-            toast.warning("Appointment could not be booked. Trying next doctor...");
-            moveToNextDoctor()
+          } else {
+            toast.warning(
+              "Appointment could not be booked. Trying next doctor..."
+            );
+            moveToNextDoctor();
           }
         }, 5000);
       }
@@ -288,17 +321,16 @@ useEffect(()=> {
         ]);
       }
 
-      if(data.event === "call_not_picked") {
-      // doctor did not pick call...move to next
-      toast.info("Doctor did not pick call. Trying next doctor...");
+      if (data.event === "call_not_picked") {
+        // doctor did not pick call...move to next
+        toast.info("Doctor did not pick call. Trying next doctor...");
 
-      moveToNextDoctor()
-
+        moveToNextDoctor();
       }
     };
 
     wsRef.current.onclose = () => {
-     console.log("WebSocket disconnected");
+      console.log("WebSocket disconnected");
     };
 
     wsRef.current.onerror = (error) => {
@@ -317,18 +349,22 @@ useEffect(()=> {
   const handleEndCall = async (id: string, retries = 5): Promise<any> => {
     try {
       const resp = await axios.post(
-        `https://callai-backend-243277014955.us-central1.run.app/api/appointment-booked-status`, 
+        `https://callai-backend-243277014955.us-central1.run.app/api/appointment-booked-status`,
         { call_id: id }
       );
       return resp.data;
     } catch (error) {
       //console.error('Error ending call:', error);
       if (error.response && error.response.status === 500 && retries > 0) {
-        console.log(`Retrying to end call in 5 seconds... (${retries} retries left)`);
-        await new Promise(resolve => setTimeout(resolve, 5000));
+        console.log(
+          `Retrying to end call in 5 seconds... (${retries} retries left)`
+        );
+        await new Promise((resolve) => setTimeout(resolve, 5000));
         return handleEndCall(id, retries - 1);
       }
-      console.log('Failed to end call after multiple attempts. Returning true.');
+      console.log(
+        "Failed to end call after multiple attempts. Returning true."
+      );
       return true;
     }
   };
@@ -336,12 +372,12 @@ useEffect(()=> {
     // console.log(id,'xxx')
     try {
       const resp = await axios.post(
-        `https://callai-backend-243277014955.us-central1.run.app/api/terminate-call`, 
+        `https://callai-backend-243277014955.us-central1.run.app/api/terminate-call`,
         { call_id: id }
       );
       return resp.data;
     } catch (error) {
-      console.error('Error ending call:', error);
+      console.error("Error ending call:", error);
       return true;
     }
   };
@@ -369,7 +405,13 @@ useEffect(()=> {
               collisionDetection={closestCenter}
             >
               <ScrollArea className="h-96 w-full">
-                <Column activeCallIndex={activeCallIndex} tasks={doctors} isDraggable={!isConfirmed} callStatus={callStatus} isAppointmentBooked={isAppointmentBooked} />
+                <Column
+                  activeCallIndex={activeCallIndex}
+                  tasks={doctors}
+                  isDraggable={!isConfirmed}
+                  callStatus={callStatus}
+                  isAppointmentBooked={isAppointmentBooked}
+                />
               </ScrollArea>
               <div className="flex justify-between">
                 <Button
@@ -402,20 +444,31 @@ useEffect(()=> {
 
         <div className="flex  w-full items-center justify-center self-center mt-20 gap-12 pl-16 ">
           <Link href="/contact ">
-            <Button onClick={()=>wsRef?.current?.close()} className="px-8 py-6">
+            <Button
+              onClick={() => wsRef?.current?.close()}
+              className="px-8 py-6"
+            >
               {" "}
               <HomeIcon />
               Home
             </Button>
           </Link>
-            <Button onClick={()=>moveToNextDoctor(callStatus?.ssid)} disabled={!callStatus?.isInitiated} className="bg-blue-900 px-8 py-6">
-              {" "}
-              <ArrowRight /> Move to Next Doctor
-            </Button>
-            <Button onClick={()=> terminateRequest()} disabled={!callStatus?.isInitiated}  className="bg-red-900 px-8 py-6">
-              {" "}
-              <OctagonX /> Terminate request
-            </Button>
+          <Button
+            onClick={() => moveToNextDoctor(callStatus?.ssid)}
+            disabled={!callStatus?.isInitiated}
+            className="bg-blue-900 px-8 py-6"
+          >
+            {" "}
+            <ArrowRight /> Move to Next Doctor
+          </Button>
+          <Button
+            onClick={() => terminateRequest()}
+            disabled={!callStatus?.isInitiated}
+            className="bg-red-900 px-8 py-6"
+          >
+            {" "}
+            <OctagonX /> Terminate request
+          </Button>
         </div>
       </div>
     </div>
