@@ -1,6 +1,6 @@
-// import { nanoid } from "@reduxjs/toolkit";
+import { nanoid } from "@reduxjs/toolkit";
 
-// export const APP_SESSION = nanoid();
+export const APP_SESSION = nanoid();
 export const baseURL = "";
 export const LIMIT = 30;
 
